@@ -19,6 +19,7 @@
     <script>
         window.CLOUD_SCREEN_TV = {
             dataUrl: "{{ data_url }}",
+            controlUrl: "{{ control_url }}",
             presentationName: "{{ presentation.name|escapejs }}",
             displayScale: {{ display_scale|default:100 }},
         };

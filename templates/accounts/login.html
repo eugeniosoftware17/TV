@@ -1,16 +1,23 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Iniciar sesión - Cloud Screen{% endblock %}
+{% block title %}{{ site_settings.browser_title }}{% endblock %}
 
 {% block auth_content %}
 <div class="login-page">
     <div class="login-card">
         <div class="login-brand">
+            {% if site_settings.login_logo %}
+            <img src="{{ site_settings.login_logo.url }}" alt="{{ site_settings.site_name }}" class="login-logo">
+            {% else %}
             <span class="brand-icon large">☁</span>
-            <h1>Cloud Screen</h1>
+            <h1>{{ site_settings.site_name }}</h1>
+            {% endif %}
             <p>Gestión de presentaciones para televisores</p>
         </div>
+        {% if request.GET.reason == "inactivity" %}
+        <div class="alert alert-error">Sesión cerrada por inactividad.</div>
+        {% endif %}
         {% if form.errors %}
         <div class="alert alert-error">Usuario o contraseña incorrectos.</div>
         {% endif %}

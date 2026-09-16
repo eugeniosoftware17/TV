@@ -4,7 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Cloud Screen{% endblock %}</title>
+    <title>{% block title %}{{ site_settings.browser_title }}{% endblock %}</title>
+    {% if site_settings.favicon %}
+    <link rel="icon" href="{{ site_settings.favicon.url }}">
+    {% endif %}
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -16,8 +19,12 @@
     <div class="app-layout">
         <aside class="sidebar">
             <div class="sidebar-brand">
+                {% if site_settings.site_logo %}
+                <img src="{{ site_settings.site_logo.url }}" alt="{{ site_settings.site_name }}" class="brand-logo">
+                {% else %}
                 <span class="brand-icon">☁</span>
-                <span class="brand-text">Cloud Screen</span>
+                <span class="brand-text">{{ site_settings.site_name }}</span>
+                {% endif %}
             </div>
             <nav class="sidebar-nav">
                 <a href="{% url 'core:dashboard' %}" class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
@@ -26,9 +33,14 @@
                 <a href="{% url 'presentations:list' %}" class="nav-link {% if 'presentations' in request.path and '/p/' not in request.path %}active{% endif %}">
                     <span class="nav-icon">▤</span> Presentaciones
                 </a>
+                {% if request.user.is_superuser or request.user.profile.role == "admin" %}
                 <a href="{% url 'screens:list' %}" class="nav-link {% if 'screens' in request.path %}active{% endif %}">
                     <span class="nav-icon">▣</span> Pantallas
                 </a>
+                <a href="{% url 'accounts:user_list' %}" class="nav-link {% if 'users' in request.path %}active{% endif %}">
+                    <span class="nav-icon">⚙</span> Usuarios
+                </a>
+                {% endif %}
             </nav>
             <div class="sidebar-footer">
                 <div class="user-info">
@@ -57,6 +69,32 @@
             </main>
         </div>
     </div>
+    <script>
+    (function () {
+        var TIMEOUT_MS = 30 * 60 * 1000;
+        var timer = null;
+
+        function doLogout() {
+            fetch("{% url 'accounts:logout' %}", {
+                method: "POST",
+                headers: { "X-CSRFToken": "{{ csrf_token }}" },
+            }).finally(function () {
+                window.location.href = "{% url 'accounts:login' %}?reason=inactivity";
+            });
+        }
+
+        function resetTimer() {
+            if (timer) clearTimeout(timer);
+            timer = setTimeout(doLogout, TIMEOUT_MS);
+        }
+
+        ["click", "keydown", "mousemove", "scroll", "touchstart"].forEach(function (evt) {
+            document.addEventListener(evt, resetTimer, { passive: true });
+        });
+
+        resetTimer();
+    })();
+    </script>
     {% else %}
     {% block auth_content %}{% endblock %}
     {% endif %}

@@ -118,6 +118,25 @@
         }
     }
 
+    async function checkControl() {
+        if (!config.controlUrl) return;
+        try {
+            const response = await fetch(config.controlUrl, { cache: 'no-store' });
+            if (!response.ok) return;
+            const data = await response.json();
+            if (data.reload) {
+                window.location.reload();
+            }
+        } catch (err) {
+            /* se reintenta en el próximo ciclo de polling */
+        }
+    }
+
+    async function poll() {
+        await fetchPresentation();
+        await checkControl();
+    }
+
     function keepAwake() {
         let wakeLock = null;
         async function requestWakeLock() {
@@ -135,13 +154,13 @@
 
     function init() {
         keepAwake();
-        fetchPresentation();
+        poll();
 
-        pollInterval = setInterval(fetchPresentation, 30000);
+        pollInterval = setInterval(poll, 30000);
 
         window.addEventListener('online', () => {
             setOnline(true);
-            fetchPresentation();
+            poll();
         });
         window.addEventListener('offline', () => setOnline(false));
 

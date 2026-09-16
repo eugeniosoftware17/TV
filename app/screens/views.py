@@ -1,20 +1,25 @@
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.utils import timezone
 from django.views.decorators.http import require_http_methods, require_POST
 
+from accounts.models import UserProfile
+from accounts.permissions import role_required
 from screens.forms import ScreenForm
 from screens.models import Screen
 from screens.services import ScreenService
 
+ADMIN = UserProfile.Role.ADMIN
 
-@login_required
+
+@role_required(ADMIN)
 def screen_list(request):
     screens = Screen.objects.select_related("current_presentation").all()
     return render(request, "screens/list.html", {"screens": screens})
 
 
-@login_required
+@role_required(ADMIN)
 @require_http_methods(["GET", "POST"])
 def screen_create(request):
     if request.method == "POST":
@@ -33,7 +38,7 @@ def screen_create(request):
     return render(request, "screens/form.html", {"form": form, "title": "Registrar pantalla"})
 
 
-@login_required
+@role_required(ADMIN)
 @require_http_methods(["GET", "POST"])
 def screen_edit(request, pk):
     screen = get_object_or_404(Screen, pk=pk)
@@ -59,10 +64,20 @@ def screen_edit(request, pk):
     )
 
 
-@login_required
+@role_required(ADMIN)
 @require_POST
 def screen_delete(request, pk):
     screen = get_object_or_404(Screen, pk=pk)
     ScreenService.delete(screen, user=request.user)
     messages.success(request, "Pantalla eliminada.")
     return redirect("screens:list")
+
+
+@role_required(ADMIN)
+@require_POST
+def screen_reload(request, pk):
+    screen = get_object_or_404(Screen, pk=pk)
+    screen.reload_requested = True
+    screen.reload_requested_at = timezone.now()
+    screen.save(update_fields=["reload_requested", "reload_requested_at"])
+    return JsonResponse({"success": True})

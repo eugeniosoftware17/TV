@@ -1,28 +1,33 @@
 import json
 
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_http_methods, require_POST
 
+from accounts.models import UserProfile
+from accounts.permissions import role_required
 from presentations.forms import PowerPointImportForm, PresentationForm, SlideForm
 from presentations.models import PowerPointImport, Presentation, Slide
 from presentations.services import MediaService, PowerPointImportService, PresentationService, SlideService
 
+ADMIN = UserProfile.Role.ADMIN
+EDITOR = UserProfile.Role.EDITOR
+VIEWER = UserProfile.Role.VIEWER
 
-@login_required
+
+@role_required(ADMIN, EDITOR, VIEWER)
 def presentation_list(request):
     presentations = Presentation.objects.all()
     return render(request, "presentations/list.html", {"presentations": presentations})
 
 
-@login_required
+@role_required(ADMIN, EDITOR)
 def presentation_create_choice(request):
     return render(request, "presentations/create_choice.html")
 
 
-@login_required
+@role_required(ADMIN, EDITOR)
 @require_http_methods(["GET", "POST"])
 def presentation_create(request):
     if request.method == "POST":
@@ -42,7 +47,7 @@ def presentation_create(request):
     return render(request, "presentations/form.html", {"form": form, "title": "Nueva presentación"})
 
 
-@login_required
+@role_required(ADMIN, EDITOR)
 @require_http_methods(["GET", "POST"])
 def presentation_import_powerpoint(request):
     if request.method == "POST":
@@ -63,7 +68,7 @@ def presentation_import_powerpoint(request):
     )
 
 
-@login_required
+@role_required(ADMIN, EDITOR)
 def presentation_import_status(request, pk):
     ppt_import = get_object_or_404(PowerPointImport, pk=pk)
     return render(
@@ -73,13 +78,13 @@ def presentation_import_status(request, pk):
     )
 
 
-@login_required
+@role_required(ADMIN, EDITOR)
 def presentation_import_status_api(request, pk):
     ppt_import = get_object_or_404(PowerPointImport, pk=pk)
     return JsonResponse(PowerPointImportService.get_status_payload(ppt_import))
 
 
-@login_required
+@role_required(ADMIN, EDITOR)
 @require_http_methods(["GET", "POST"])
 def presentation_edit(request, pk):
     presentation = get_object_or_404(Presentation, pk=pk)
@@ -105,7 +110,7 @@ def presentation_edit(request, pk):
     )
 
 
-@login_required
+@role_required(ADMIN, EDITOR, VIEWER)
 def presentation_detail(request, pk):
     presentation = get_object_or_404(Presentation, pk=pk)
     public_url = request.build_absolute_uri(presentation.get_public_path())
@@ -116,7 +121,7 @@ def presentation_detail(request, pk):
     )
 
 
-@login_required
+@role_required(ADMIN, EDITOR)
 def presentation_editor(request, pk):
     presentation = get_object_or_404(Presentation, pk=pk)
     slides = presentation.slides.all()
@@ -128,7 +133,7 @@ def presentation_editor(request, pk):
     )
 
 
-@login_required
+@role_required(ADMIN)
 @require_POST
 def presentation_delete(request, pk):
     presentation = get_object_or_404(Presentation, pk=pk)
@@ -137,7 +142,7 @@ def presentation_delete(request, pk):
     return redirect("presentations:list")
 
 
-@login_required
+@role_required(ADMIN, EDITOR)
 @require_POST
 def presentation_duplicate(request, pk):
     presentation = get_object_or_404(Presentation, pk=pk)
@@ -146,7 +151,7 @@ def presentation_duplicate(request, pk):
     return redirect("presentations:editor", pk=new_presentation.pk)
 
 
-@login_required
+@role_required(ADMIN, EDITOR)
 @require_POST
 def presentation_toggle(request, pk):
     presentation = get_object_or_404(Presentation, pk=pk)
@@ -156,7 +161,7 @@ def presentation_toggle(request, pk):
     return redirect(request.META.get("HTTP_REFERER", "presentations:list"))
 
 
-@login_required
+@role_required(ADMIN, EDITOR)
 @require_http_methods(["GET", "POST"])
 def slide_create(request, presentation_pk):
     presentation = get_object_or_404(Presentation, pk=presentation_pk)
@@ -197,7 +202,7 @@ def slide_create(request, presentation_pk):
     )
 
 
-@login_required
+@role_required(ADMIN, EDITOR)
 @require_http_methods(["GET", "POST"])
 def slide_edit(request, pk):
     slide = get_object_or_404(Slide, pk=pk)
@@ -238,7 +243,7 @@ def slide_edit(request, pk):
     )
 
 
-@login_required
+@role_required(ADMIN)
 @require_POST
 def slide_delete(request, pk):
     slide = get_object_or_404(Slide, pk=pk)
@@ -248,7 +253,7 @@ def slide_delete(request, pk):
     return redirect("presentations:editor", pk=presentation_pk)
 
 
-@login_required
+@role_required(ADMIN, EDITOR)
 @require_POST
 def slide_duplicate(request, pk):
     slide = get_object_or_404(Slide, pk=pk)
@@ -257,7 +262,7 @@ def slide_duplicate(request, pk):
     return redirect("presentations:editor", pk=slide.presentation_id)
 
 
-@login_required
+@role_required(ADMIN, EDITOR)
 @require_POST
 def slide_reorder(request, presentation_pk):
     presentation = get_object_or_404(Presentation, pk=presentation_pk)
@@ -278,7 +283,7 @@ def slide_reorder(request, presentation_pk):
     return JsonResponse({"success": True})
 
 
-@login_required
+@role_required(ADMIN, EDITOR, VIEWER)
 def slide_preview_data(request, presentation_pk):
     presentation = get_object_or_404(Presentation, pk=presentation_pk)
     data = PresentationService.get_player_data(presentation)

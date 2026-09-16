@@ -9,4 +9,5 @@ urlpatterns = [
     path("create/", views.screen_create, name="create"),
     path("<int:pk>/edit/", views.screen_edit, name="edit"),
     path("<int:pk>/delete/", views.screen_delete, name="delete"),
+    path("<int:pk>/reload/", views.screen_reload, name="reload"),
 ]

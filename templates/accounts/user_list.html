@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block page_title %}Usuarios{% endblock %}
+
+{% block topbar_actions %}
+<a href="{% url 'accounts:user_create' %}" class="btn btn-primary">+ Nuevo usuario</a>
+{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-body">
+        {% if users %}
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Usuario</th>
+                        <th>Email</th>
+                        <th>Rol</th>
+                        <th>Activo</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for u in users %}
+                    <tr>
+                        <td><strong>{{ u.username }}</strong></td>
+                        <td>{{ u.email|default:"—" }}</td>
+                        <td>{{ u.profile.get_role_display|default:"—" }}</td>
+                        <td>{% if u.is_active %}Sí{% else %}No{% endif %}</td>
+                        <td>
+                            <a href="{% url 'accounts:user_edit' u.pk %}" class="btn btn-sm btn-outline">Editar</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="empty-state-large">
+            <p>No hay usuarios registrados.</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

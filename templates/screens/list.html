@@ -46,6 +46,10 @@
                         </td>
                         <td>
                             <a href="{% url 'screens:edit' screen.pk %}" class="btn btn-sm btn-outline">Editar</a>
+                            <form method="post" action="{% url 'screens:reload' screen.pk %}" class="inline-form reload-form">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-sm btn-outline">Recargar TV</button>
+                            </form>
                             <form method="post" action="{% url 'screens:delete' screen.pk %}" class="inline-form" onsubmit="return confirm('¿Eliminar pantalla?')">
                                 {% csrf_token %}
                                 <button type="submit" class="btn btn-sm btn-danger">Eliminar</button>
@@ -65,4 +69,28 @@
         {% endif %}
     </div>
 </div>
+<script>
+document.querySelectorAll('.reload-form').forEach(function (form) {
+    form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        if (!confirm('¿Enviar solicitud de recarga a esta pantalla?')) return;
+        const formData = new FormData(form);
+        fetch(form.action, {
+            method: 'POST',
+            headers: { 'X-CSRFToken': formData.get('csrfmiddlewaretoken') },
+            body: formData,
+        })
+            .then(function (response) {
+                if (!response.ok) throw new Error('request failed');
+                return response.json();
+            })
+            .then(function () {
+                alert('Solicitud de recarga enviada. La pantalla se actualizará en los próximos segundos.');
+            })
+            .catch(function () {
+                alert('No se pudo enviar la solicitud de recarga.');
+            });
+    });
+});
+</script>
 {% endblock %}

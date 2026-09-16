@@ -54,3 +54,32 @@ class EventLog(models.Model):
 
     def __str__(self):
         return f"{self.get_event_type_display()} - {self.created_at:%Y-%m-%d %H:%M}"
+
+
+class SiteSettings(models.Model):
+    """Configuración global del sitio (singleton: un único registro, pk=1)."""
+
+    site_logo = models.ImageField("Logo del sitio", upload_to="site/", blank=True, null=True)
+    login_logo = models.ImageField("Logo de login", upload_to="site/", blank=True, null=True)
+    favicon = models.ImageField("Favicon", upload_to="site/", blank=True, null=True)
+    site_name = models.CharField("Nombre del sitio", max_length=100, default="Cloud Screen")
+    browser_title = models.CharField("Título del navegador", max_length=100, default="Cloud Screen")
+
+    class Meta:
+        verbose_name = "Configuración del sitio"
+        verbose_name_plural = "Configuración del sitio"
+
+    def __str__(self):
+        return self.site_name
+
+    def save(self, *args, **kwargs):
+        self.pk = 1
+        super().save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        pass
+
+    @classmethod
+    def get_solo(cls):
+        obj, _ = cls.objects.get_or_create(pk=1)
+        return obj

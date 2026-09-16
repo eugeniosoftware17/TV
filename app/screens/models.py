@@ -52,6 +52,8 @@ class Screen(models.Model):
         related_name="screens",
     )
     session_id = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    reload_requested = models.BooleanField(default=False)
+    reload_requested_at = models.DateTimeField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
