@@ -116,11 +116,11 @@ Pasos previstos:
 
 ## Formatos multimedia soportados
 
-| Tipo     | Extensiones        |
-|----------|--------------------|
-| Imagen   | JPG, JPEG, PNG, WEBP, GIF |
-| Video    | MP4, WEBM          |
-| Documento| PDF (visualización básica en Fase 2) |
+| Tipo      | Extensiones                          |
+| --------- | ------------------------------------ |
+| Imagen    | JPG, JPEG, PNG, WEBP, GIF            |
+| Video     | MP4, WEBM                            |
+| Documento | PDF (visualización básica en Fase 2) |
 
 PowerPoint (.pptx) requerirá conversión server-side en una fase posterior.
 
