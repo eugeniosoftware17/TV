@@ -1,5 +1,3 @@
-import secrets
-
 from django.conf import settings
 from django.db import models
 from django.urls import reverse
@@ -7,7 +5,13 @@ from django.utils.text import slugify
 
 
 def generate_presentation_token():
-    return secrets.token_urlsafe(16)
+    """Genera un código numérico de 3 dígitos (001-999) único para el enlace público."""
+    used_tokens = set(Presentation.objects.values_list("token", flat=True))
+    for number in range(1, 1000):
+        candidate = f"{number:03d}"
+        if candidate not in used_tokens:
+            return candidate
+    raise ValueError("No hay códigos de presentación disponibles (se alcanzó el límite de 999).")
 
 
 def media_upload_path(instance, filename):
@@ -42,7 +46,7 @@ class Presentation(models.Model):
         choices=Status.choices,
         default=Status.ACTIVE,
     )
-    token = models.CharField(max_length=64, unique=True, default=generate_presentation_token, editable=False)
+    token = models.CharField(max_length=3, unique=True, default=generate_presentation_token, editable=False)
     source_type = models.CharField(
         max_length=20,
         choices=SourceType.choices,
