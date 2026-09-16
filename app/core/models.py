@@ -60,7 +60,9 @@ class SiteSettings(models.Model):
     """Configuración global del sitio (singleton: un único registro, pk=1)."""
 
     site_logo = models.ImageField("Logo del sitio", upload_to="site/", blank=True, null=True)
+    sidebar_logo_width = models.IntegerField("Ancho del logo en el sidebar (px)", default=120)
     login_logo = models.ImageField("Logo de login", upload_to="site/", blank=True, null=True)
+    login_logo_width = models.IntegerField("Ancho del logo en login (px)", default=200)
     favicon = models.ImageField("Favicon", upload_to="site/", blank=True, null=True)
     site_name = models.CharField("Nombre del sitio", max_length=100, default="Cloud Screen")
     browser_title = models.CharField("Título del navegador", max_length=100, default="Cloud Screen")

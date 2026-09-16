@@ -14,6 +14,11 @@ class EventLogAdmin(admin.ModelAdmin):
 @admin.register(SiteSettings)
 class SiteSettingsAdmin(admin.ModelAdmin):
     list_display = ("site_name", "browser_title")
+    fieldsets = (
+        ("General", {"fields": ("site_name", "browser_title", "favicon")}),
+        ("Logo del sidebar", {"fields": ("site_logo", "sidebar_logo_width")}),
+        ("Logo de login", {"fields": ("login_logo", "login_logo_width")}),
+    )
 
     def has_add_permission(self, request):
         return not SiteSettings.objects.exists()

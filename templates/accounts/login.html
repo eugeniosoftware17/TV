@@ -8,10 +8,9 @@
     <div class="login-card">
         <div class="login-brand">
             {% if site_settings.login_logo %}
-            <img src="{{ site_settings.login_logo.url }}" alt="{{ site_settings.site_name }}" class="login-logo">
+            <img src="{{ site_settings.login_logo.url }}" alt="{{ site_settings.site_name }}" class="login-logo" style="width: {{ site_settings.login_logo_width }}px;">
             {% else %}
-            <span class="brand-icon large">☁</span>
-            <h1>{{ site_settings.site_name }}</h1>
+            <h1 class="login-brand-text">{{ site_settings.site_name }}</h1>
             {% endif %}
             <p>Gestión de presentaciones para televisores</p>
         </div>

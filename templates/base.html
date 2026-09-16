@@ -20,10 +20,9 @@
         <aside class="sidebar">
             <div class="sidebar-brand">
                 {% if site_settings.site_logo %}
-                <img src="{{ site_settings.site_logo.url }}" alt="{{ site_settings.site_name }}" class="brand-logo">
+                <img src="{{ site_settings.site_logo.url }}" alt="{{ site_settings.site_name }}" class="brand-logo" style="width: {{ site_settings.sidebar_logo_width }}px;">
                 {% else %}
-                <span class="brand-icon">☁</span>
-                <span class="brand-text">{{ site_settings.site_name }}</span>
+                <span class="brand-text-large">{{ site_settings.site_name }}</span>
                 {% endif %}
             </div>
             <nav class="sidebar-nav">
