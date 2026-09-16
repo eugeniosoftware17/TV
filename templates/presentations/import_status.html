@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block page_title %}Importando PowerPoint{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/powerpoint-import.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="card card-narrow">
+    <div class="card-body ppt-status-body">
+        <div id="import-status-panel" data-status-url="{% url 'presentations:import_status_api' ppt_import.pk %}">
+            <div class="ppt-status-icon processing" id="status-icon">⏳</div>
+            <h2 id="status-title">Procesando presentación...</h2>
+            <p id="status-message" class="text-muted">
+                {% if ppt_import.slide_count %}
+                Procesando {{ ppt_import.slide_count }} diapositiva{{ ppt_import.slide_count|pluralize:"s" }}...
+                {% else %}
+                Analizando archivo PowerPoint...
+                {% endif %}
+            </p>
+            <div class="ppt-progress-bar" id="progress-bar">
+                <div class="ppt-progress-fill" id="progress-fill" style="width: 0%"></div>
+            </div>
+            <p class="ppt-progress-text" id="progress-text"></p>
+
+            <div id="status-success" class="hidden">
+                <p class="ppt-success-msg">✓ Presentación importada correctamente.</p>
+                <a href="#" id="editor-link" class="btn btn-primary">Abrir en editor</a>
+                <a href="{% url 'presentations:list' %}" class="btn btn-outline">Ver todas</a>
+            </div>
+
+            <div id="status-error" class="hidden">
+                <p class="alert alert-error" id="error-message"></p>
+                <a href="{% url 'presentations:import_powerpoint' %}" class="btn btn-primary">Intentar de nuevo</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/powerpoint-import-status.js' %}"></script>
+{% endblock %}

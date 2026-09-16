@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block page_title %}Presentaciones{% endblock %}
+
+{% block topbar_actions %}
+<a href="{% url 'presentations:create' %}" class="btn btn-primary">+ Nueva presentación</a>
+{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-body">
+        {% if presentations %}
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Origen</th>
+                        <th>Estado</th>
+                        <th>Diapositivas</th>
+                        <th>Actualizada</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for p in presentations %}
+                    <tr>
+                        <td>
+                            <a href="{% url 'presentations:editor' p.pk %}" class="table-link">{{ p.name }}</a>
+                            {% if p.description %}<div class="text-muted">{{ p.description|truncatechars:50 }}</div>{% endif %}
+                        </td>
+                        <td>
+                            {% if p.is_powerpoint_import %}
+                            <span class="badge badge-powerpoint">PowerPoint</span>
+                            {% else %}
+                            <span class="text-muted">Manual</span>
+                            {% endif %}
+                        </td>
+                        <td><span class="badge badge-{{ p.status }}">{{ p.get_status_display }}</span></td>
+                        <td>{{ p.slides.count }}</td>
+                        <td>{{ p.updated_at|date:"d/m/Y H:i" }}</td>
+                        <td class="actions-cell">
+                            <a href="{% url 'presentations:editor' p.pk %}" class="btn btn-sm btn-outline">Editor</a>
+                            <a href="{% url 'presentations:detail' p.pk %}" class="btn btn-sm btn-outline">Ver</a>
+                            <form method="post" action="{% url 'presentations:toggle' p.pk %}" class="inline-form">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-sm btn-outline">
+                                    {% if p.is_active %}Desactivar{% else %}Activar{% endif %}
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="empty-state-large">
+            <p>No hay presentaciones creadas.</p>
+            <a href="{% url 'presentations:create' %}" class="btn btn-primary">Crear presentación</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

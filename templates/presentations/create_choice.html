@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block page_title %}Nueva presentación{% endblock %}
+
+{% block content %}
+<div class="create-choice-grid">
+    <a href="{% url 'presentations:create_manual' %}" class="choice-card">
+        <div class="choice-icon">✎</div>
+        <h2>Crear desde cero</h2>
+        <p>Construye tu presentación diapositiva por diapositiva con texto, imágenes y videos.</p>
+        <span class="btn btn-primary">Comenzar</span>
+    </a>
+
+    <a href="{% url 'presentations:import_powerpoint' %}" class="choice-card choice-card-accent">
+        <div class="choice-icon">📊</div>
+        <h2>Importar PowerPoint</h2>
+        <p>Sube un archivo .pptx y convierte automáticamente cada diapositiva para Cloud Screen.</p>
+        <span class="btn btn-outline">Importar .PPTX</span>
+    </a>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/powerpoint-import.css' %}">
+{% endblock %}

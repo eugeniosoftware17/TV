@@ -1,0 +1,179 @@
+.create-choice-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    max-width: 800px;
+}
+
+.choice-card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    padding: 2rem;
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+    gap: .75rem;
+    transition: box-shadow .2s, border-color .2s;
+}
+
+.choice-card:hover {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, .08);
+    border-color: var(--color-primary);
+    text-decoration: none;
+}
+
+.choice-card-accent {
+    border-color: #bfdbfe;
+    background: linear-gradient(180deg, #fff 0%, #f0f7ff 100%);
+}
+
+.choice-icon {
+    font-size: 2.5rem;
+    line-height: 1;
+}
+
+.choice-card h2 {
+    font-size: 1.15rem;
+    font-weight: 600;
+}
+
+.choice-card p {
+    color: var(--color-text-muted);
+    font-size: .9rem;
+    flex: 1;
+}
+
+.ppt-dropzone {
+    border: 2px dashed var(--color-border);
+    border-radius: 12px;
+    padding: 2.5rem 1.5rem;
+    text-align: center;
+    background: var(--color-bg);
+    transition: border-color .2s, background .2s;
+    margin-bottom: 1rem;
+}
+
+.ppt-dropzone.dragover {
+    border-color: var(--color-primary);
+    background: #eff6ff;
+}
+
+.ppt-dropzone-icon {
+    font-size: 2.5rem;
+    margin-bottom: .5rem;
+}
+
+.ppt-dropzone h3 {
+    font-size: 1rem;
+    margin-bottom: .25rem;
+}
+
+.ppt-dropzone-meta {
+    font-size: .8rem;
+    color: var(--color-text-muted);
+    margin-top: 1rem;
+}
+
+.ppt-file-input-hidden {
+    position: absolute;
+    width: 0;
+    height: 0;
+    overflow: hidden;
+    opacity: 0;
+}
+
+.ppt-file-input-hidden input[type="file"] {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.ppt-file-btn {
+    margin-top: .75rem;
+    cursor: pointer;
+}
+
+.ppt-selected-file {
+    margin-top: 1rem;
+    font-weight: 500;
+    color: var(--color-primary);
+}
+
+.ppt-info-box {
+    margin-top: 1.5rem;
+    padding: 1rem 1.25rem;
+    background: var(--color-bg);
+    border-radius: var(--radius);
+    border: 1px solid var(--color-border);
+}
+
+.ppt-info-box h4 {
+    font-size: .9rem;
+    margin-bottom: .5rem;
+}
+
+.ppt-info-box ul {
+    margin-left: 1.25rem;
+    color: var(--color-text-muted);
+    font-size: .85rem;
+}
+
+.ppt-info-box li {
+    margin-bottom: .25rem;
+}
+
+.ppt-status-body {
+    text-align: center;
+    padding: 3rem 2rem !important;
+}
+
+.ppt-status-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.ppt-status-icon.success { color: var(--color-success); }
+.ppt-status-icon.error { color: var(--color-danger); }
+
+.ppt-progress-bar {
+    height: 8px;
+    background: var(--color-border);
+    border-radius: 999px;
+    overflow: hidden;
+    margin: 1.5rem auto;
+    max-width: 320px;
+}
+
+.ppt-progress-fill {
+    height: 100%;
+    background: var(--color-primary);
+    border-radius: 999px;
+    transition: width .4s ease;
+}
+
+.ppt-progress-text {
+    font-size: .85rem;
+    color: var(--color-text-muted);
+    min-height: 1.25rem;
+}
+
+.ppt-success-msg {
+    font-size: 1.1rem;
+    color: var(--color-success);
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.hidden { display: none !important; }
+
+.badge-powerpoint {
+    background: #dbeafe;
+    color: #1e40af;
+}
+
+.badge-source {
+    display: inline-block;
+    margin-left: .5rem;
+}

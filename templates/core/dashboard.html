@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block page_title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-label">Presentaciones</div>
+        <div class="stat-value">{{ stats.total_presentations }}</div>
+        <div class="stat-meta">{{ stats.active_presentations }} activas</div>
+    </div>
+    <div class="stat-card stat-success">
+        <div class="stat-label">Pantallas activas</div>
+        <div class="stat-value">{{ stats.connected_screens }}</div>
+    </div>
+    <div class="stat-card stat-warning">
+        <div class="stat-label">Pantallas offline</div>
+        <div class="stat-value">{{ stats.offline_screens }}</div>
+    </div>
+</div>
+
+<div class="grid-2">
+    <div class="card">
+        <div class="card-header">
+            <h2>Últimas presentaciones</h2>
+            <a href="{% url 'presentations:list' %}" class="btn btn-sm btn-outline">Ver todas</a>
+        </div>
+        <div class="card-body">
+            {% if stats.recent_presentations %}
+            <ul class="list-items">
+                {% for p in stats.recent_presentations %}
+                <li class="list-item">
+                    <div>
+                        <a href="{% url 'presentations:editor' p.pk %}" class="item-title">{{ p.name }}</a>
+                        <span class="item-meta">Actualizada {{ p.updated_at|timesince }} atrás</span>
+                    </div>
+                    <span class="badge badge-{{ p.status }}">{{ p.get_status_display }}</span>
+                </li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <p class="empty-state">No hay presentaciones aún. <a href="{% url 'presentations:create' %}">Crear la primera</a></p>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h2>Actividad reciente</h2>
+        </div>
+        <div class="card-body">
+            {% if stats.recent_events %}
+            <ul class="list-items">
+                {% for event in stats.recent_events %}
+                <li class="list-item">
+                    <div>
+                        <span class="item-title">{{ event.get_event_type_display }}</span>
+                        <span class="item-meta">{{ event.message|truncatechars:60 }}</span>
+                    </div>
+                    <span class="item-meta">{{ event.created_at|timesince }} atrás</span>
+                </li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <p class="empty-state">Sin actividad registrada.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<div class="quick-actions">
+    <a href="{% url 'presentations:create' %}" class="btn btn-primary">+ Nueva presentación</a>
+    <a href="{% url 'screens:create' %}" class="btn btn-outline">+ Registrar pantalla</a>
+</div>
+{% endblock %}

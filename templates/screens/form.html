@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block page_title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="card card-narrow">
+    <div class="card-body">
+        {% if screen %}
+        <dl class="detail-list compact">
+            <dt>Identificador</dt><dd><code>{{ screen.identifier }}</code></dd>
+            <dt>Código de vinculación</dt><dd><code>{{ screen.pairing_code }}</code> <small class="text-muted">(Fase 2)</small></dd>
+        </dl>
+        <hr>
+        {% endif %}
+        <form method="post" novalidate>
+            {% csrf_token %}
+            {% for field in form %}
+            <div class="form-group">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}
+                <div class="field-error">{{ field.errors.0 }}</div>
+                {% endif %}
+            </div>
+            {% endfor %}
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Guardar</button>
+                <a href="{% url 'screens:list' %}" class="btn btn-outline">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

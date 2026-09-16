@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Iniciar sesión - Cloud Screen{% endblock %}
+
+{% block auth_content %}
+<div class="login-page">
+    <div class="login-card">
+        <div class="login-brand">
+            <span class="brand-icon large">☁</span>
+            <h1>Cloud Screen</h1>
+            <p>Gestión de presentaciones para televisores</p>
+        </div>
+        {% if form.errors %}
+        <div class="alert alert-error">Usuario o contraseña incorrectos.</div>
+        {% endif %}
+        <form method="post" class="login-form">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="id_username">Usuario</label>
+                <input type="text" name="username" id="id_username" class="form-control" required autofocus>
+            </div>
+            <div class="form-group">
+                <label for="id_password">Contraseña</label>
+                <input type="password" name="password" id="id_password" class="form-control" required>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">Iniciar sesión</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

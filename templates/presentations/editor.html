@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block page_title %}{{ presentation.name }} - Editor{% endblock %}
+
+{% block topbar_actions %}
+<a href="{{ public_url }}" target="_blank" class="btn btn-outline">Vista TV</a>
+<a href="{% url 'presentations:detail' presentation.pk %}" class="btn btn-outline">Detalle</a>
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/editor.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="editor-layout">
+    <div class="editor-panel">
+        <div class="editor-header">
+            <h2>{{ presentation.name }}</h2>
+            <div>
+                {% if presentation.is_powerpoint_import %}
+                <span class="badge badge-powerpoint">PowerPoint</span>
+                {% endif %}
+                <span class="badge badge-{{ presentation.status }}">{{ presentation.get_status_display }}</span>
+            </div>
+        </div>
+
+        <div class="slide-actions-bar">
+            <div class="dropdown">
+                <a href="{% url 'presentations:slide_create' presentation.pk %}?type=text" class="btn btn-primary">+ Nueva diapositiva</a>
+            </div>
+        </div>
+
+        <ul id="slide-list" class="slide-list" data-reorder-url="{% url 'presentations:slide_reorder' presentation.pk %}">
+            {% for slide in slides %}
+            <li class="slide-item" data-id="{{ slide.pk }}">
+                <span class="drag-handle" title="Arrastrar para reordenar">☰</span>
+                <span class="slide-number">{{ forloop.counter }}</span>
+                <div class="slide-info">
+                    <strong>{{ slide.title|default:"Sin título" }}</strong>
+                    <span class="slide-meta">{{ slide.get_slide_type_display }} · {{ slide.duration }}s</span>
+                </div>
+                <div class="slide-item-actions">
+                    <a href="{% url 'presentations:slide_edit' slide.pk %}" class="btn btn-sm btn-outline">Editar</a>
+                    <form method="post" action="{% url 'presentations:slide_duplicate' slide.pk %}" class="inline-form">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-sm btn-outline">Duplicar</button>
+                    </form>
+                    <form method="post" action="{% url 'presentations:slide_delete' slide.pk %}" class="inline-form" onsubmit="return confirm('¿Eliminar diapositiva?')">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-sm btn-danger">×</button>
+                    </form>
+                </div>
+            </li>
+            {% empty %}
+            <li class="empty-slides">No hay diapositivas. Crea la primera para comenzar.</li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <div class="preview-panel">
+        <h3>Previsualización</h3>
+        <div id="preview-screen" class="preview-screen">
+            <div class="preview-content">
+                <p class="preview-placeholder">Selecciona una diapositiva o usa los controles</p>
+            </div>
+        </div>
+        <div class="preview-controls">
+            <button type="button" id="btn-prev" class="btn btn-outline">Anterior</button>
+            <button type="button" id="btn-play" class="btn btn-primary">Vista previa</button>
+            <button type="button" id="btn-next" class="btn btn-outline">Siguiente</button>
+        </div>
+        <p class="preview-hint">Enlace TV: <a href="{{ public_url }}" target="_blank">{{ public_url }}</a></p>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    window.CLOUD_SCREEN = {
+        previewDataUrl: "{% url 'presentations:preview_data' presentation.pk %}",
+        csrfToken: "{{ csrf_token }}",
+    };
+</script>
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
+<script src="{% static 'js/editor.js' %}"></script>
+<script src="{% static 'js/preview.js' %}"></script>
+{% endblock %}

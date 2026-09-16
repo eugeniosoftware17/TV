@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block page_title %}{{ presentation.name }}{% endblock %}
+
+{% block topbar_actions %}
+<a href="{% url 'presentations:editor' presentation.pk %}" class="btn btn-primary">Abrir editor</a>
+{% endblock %}
+
+{% block content %}
+<div class="grid-2">
+    <div class="card">
+        <div class="card-header"><h2>Información</h2></div>
+        <div class="card-body">
+            <dl class="detail-list">
+                <dt>Nombre</dt><dd>{{ presentation.name }}</dd>
+                <dt>Descripción</dt><dd>{{ presentation.description|default:"—" }}</dd>
+                <dt>Origen</dt>
+                <dd>
+                    {% if presentation.is_powerpoint_import %}
+                    <span class="badge badge-powerpoint">Importada desde PowerPoint</span>
+                    {% if presentation.powerpoint_import %}
+                    <div class="text-muted" style="margin-top:.35rem;font-size:.85rem;">
+                        Archivo: {{ presentation.powerpoint_import.original_filename }}
+                    </div>
+                    {% endif %}
+                    {% else %}
+                    Manual
+                    {% endif %}
+                </dd>
+                <dt>Estado</dt><dd><span class="badge badge-{{ presentation.status }}">{{ presentation.get_status_display }}</span></dd>
+                <dt>Creada</dt><dd>{{ presentation.created_at|date:"d/m/Y H:i" }}</dd>
+                <dt>Actualizada</dt><dd>{{ presentation.updated_at|date:"d/m/Y H:i" }}</dd>
+                <dt>Diapositivas</dt><dd>{{ presentation.slides.count }}</dd>
+            </dl>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header"><h2>Enlace público (TV)</h2></div>
+        <div class="card-body">
+            <p class="text-muted">Abre este enlace en el navegador del televisor:</p>
+            <div class="url-box">
+                <code id="public-url">{{ public_url }}</code>
+                <button type="button" class="btn btn-sm btn-outline" onclick="navigator.clipboard.writeText(document.getElementById('public-url').textContent)">Copiar</button>
+            </div>
+            <div class="form-actions" style="margin-top: 1rem;">
+                <a href="{{ public_url }}" target="_blank" class="btn btn-primary">Abrir en nueva pestaña</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header"><h2>Acciones</h2></div>
+    <div class="card-body actions-row">
+        <a href="{% url 'presentations:edit' presentation.pk %}" class="btn btn-outline">Editar datos</a>
+        <form method="post" action="{% url 'presentations:duplicate' presentation.pk %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-outline">Duplicar</button>
+        </form>
+        <form method="post" action="{% url 'presentations:toggle' presentation.pk %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-outline">
+                {% if presentation.is_active %}Desactivar{% else %}Activar{% endif %}
+            </button>
+        </form>
+        <form method="post" action="{% url 'presentations:delete' presentation.pk %}" onsubmit="return confirm('¿Eliminar esta presentación?')">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">Eliminar</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

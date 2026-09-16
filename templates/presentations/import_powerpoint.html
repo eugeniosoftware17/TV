@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block page_title %}Importar PowerPoint{% endblock %}
+
+{% block topbar_actions %}
+<a href="{% url 'presentations:create' %}" class="btn btn-outline">← Volver</a>
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/powerpoint-import.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="card card-narrow">
+    <div class="card-header">
+        <h2>Importar PowerPoint</h2>
+    </div>
+    <div class="card-body">
+        <form method="post" enctype="multipart/form-data" id="ppt-import-form" novalidate>
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label for="id_name">{{ form.name.label }}</label>
+                {{ form.name }}
+            </div>
+
+            <div class="ppt-dropzone" id="ppt-dropzone">
+                <div class="ppt-dropzone-inner">
+                    <div class="ppt-dropzone-icon">📊</div>
+                    <h3>Arrastra tu archivo aquí</h3>
+                    <p>o selecciona</p>
+                    <label for="id_powerpoint_file" class="btn btn-primary ppt-file-btn">Seleccionar .PPTX</label>
+                    <p class="ppt-dropzone-meta">
+                        Formatos: PPTX, PPT (legacy)<br>
+                        Tamaño máximo: {{ max_size_mb }} MB
+                    </p>
+                    <p class="ppt-selected-file hidden" id="ppt-selected-file"></p>
+                </div>
+                <div class="ppt-file-input-hidden">{{ form.file }}</div>
+            </div>
+
+            {% if form.file.errors %}
+            <div class="alert alert-error">{{ form.file.errors.0 }}</div>
+            {% endif %}
+            {% if form.non_field_errors %}
+            <div class="alert alert-error">{{ form.non_field_errors.0 }}</div>
+            {% endif %}
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary" id="ppt-submit-btn">Importar presentación</button>
+                <a href="{% url 'presentations:create' %}" class="btn btn-outline">Cancelar</a>
+            </div>
+        </form>
+
+        <div class="ppt-info-box">
+            <h4>¿Cómo funciona?</h4>
+            <ul>
+                <li>Cada diapositiva se convierte a imagen PNG de alta calidad</li>
+                <li>Se conserva el diseño visual lo más posible</li>
+                <li>Podrás editar, reordenar y agregar contenido después</li>
+                <li>El archivo original se guarda en el servidor</li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/powerpoint-import.js' %}"></script>
+{% endblock %}

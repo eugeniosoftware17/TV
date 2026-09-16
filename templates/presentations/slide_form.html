@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block page_title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="card card-narrow">
+    <div class="card-header">
+        <h2>{{ title }}</h2>
+        <span class="text-muted">Presentación: {{ presentation.name }}</span>
+    </div>
+    <div class="card-body">
+        <form method="post" enctype="multipart/form-data" novalidate>
+            {% csrf_token %}
+            {% for field in form %}
+            <div class="form-group field-{{ field.name }}" id="group-{{ field.name }}">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.help_text %}<small class="text-muted">{{ field.help_text }}</small>{% endif %}
+                {% if field.errors %}
+                <div class="field-error">{{ field.errors.0 }}</div>
+                {% endif %}
+            </div>
+            {% endfor %}
+
+            {% if slide %}
+            <div class="current-media">
+                {% if slide.image %}
+                <p>Imagen actual: <a href="{{ slide.image.file.url }}" target="_blank">{{ slide.image.original_filename }}</a></p>
+                {% endif %}
+                {% if slide.video %}
+                <p>Video actual: <a href="{{ slide.video.file.url }}" target="_blank">{{ slide.video.original_filename }}</a></p>
+                {% endif %}
+                {% if slide.background_image %}
+                <p>Fondo actual: <a href="{{ slide.background_image.file.url }}" target="_blank">{{ slide.background_image.original_filename }}</a></p>
+                {% endif %}
+            </div>
+            {% endif %}
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Guardar diapositiva</button>
+                <a href="{% url 'presentations:editor' presentation.pk %}" class="btn btn-outline">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(function() {
+    const typeField = document.getElementById('id_slide_type');
+    const mediaFields = ['upload_image', 'upload_video', 'upload_background'];
+    const contentFields = ['content', 'title', 'subtitle'];
+
+    function toggleFields() {
+        const type = typeField.value;
+        const showImage = type === 'image' || type === 'mixed';
+        const showVideo = type === 'video' || type === 'mixed';
+        const showText = type === 'text' || type === 'mixed';
+
+        document.getElementById('group-upload_image').style.display = showImage ? '' : 'none';
+        document.getElementById('group-upload_video').style.display = showVideo ? '' : 'none';
+        document.getElementById('group-upload_background').style.display = '';
+        document.getElementById('group-content').style.display = showText ? '' : 'none';
+        document.getElementById('group-title').style.display = showText || type === 'image' ? '' : 'none';
+        document.getElementById('group-subtitle').style.display = showText || type === 'image' ? '' : 'none';
+    }
+
+    if (typeField) {
+        typeField.addEventListener('change', toggleFields);
+        toggleFields();
+    }
+})();
+</script>
+{% endblock %}
