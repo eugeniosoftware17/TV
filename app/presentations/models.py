@@ -39,6 +39,13 @@ class Presentation(models.Model):
         MANUAL = "manual", "Manual"
         POWERPOINT = "powerpoint", "PowerPoint"
 
+    class DisplayScale(models.IntegerChoices):
+        SCALE_65 = 65, "65%"
+        SCALE_75 = 75, "75%"
+        SCALE_85 = 85, "85%"
+        SCALE_95 = 95, "95%"
+        SCALE_100 = 100, "100%"
+
     name = models.CharField("Nombre", max_length=200)
     description = models.TextField("Descripción", blank=True)
     status = models.CharField(
@@ -51,6 +58,11 @@ class Presentation(models.Model):
         max_length=20,
         choices=SourceType.choices,
         default=SourceType.MANUAL,
+    )
+    display_scale = models.IntegerField(
+        "Escala de pantalla",
+        choices=DisplayScale.choices,
+        default=DisplayScale.SCALE_100,
     )
     created_by = models.ForeignKey(
         settings.AUTH_USER_MODEL,

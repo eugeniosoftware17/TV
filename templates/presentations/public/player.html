@@ -9,7 +9,7 @@
 </head>
 <body class="tv-mode">
     <div id="tv-container" class="tv-container">
-        <div id="tv-slide" class="tv-slide">
+        <div id="tv-slide" class="tv-slide" style="transform: scale({{ display_scale_factor|default:1 }});">
             <div class="tv-loading">Cargando presentación...</div>
         </div>
     </div>
@@ -20,6 +20,7 @@
         window.CLOUD_SCREEN_TV = {
             dataUrl: "{{ data_url }}",
             presentationName: "{{ presentation.name|escapejs }}",
+            displayScale: {{ display_scale|default:100 }},
         };
     </script>
     <script src="{% static 'js/tv-player.js' %}"></script>

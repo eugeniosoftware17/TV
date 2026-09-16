@@ -9,11 +9,12 @@ from presentations.validators import validate_media_file, validate_powerpoint_fi
 class PresentationForm(forms.ModelForm):
     class Meta:
         model = Presentation
-        fields = ["name", "description", "status"]
+        fields = ["name", "description", "status", "display_scale"]
         widgets = {
             "name": forms.TextInput(attrs={"class": "form-control", "placeholder": "Nombre de la presentación"}),
             "description": forms.Textarea(attrs={"class": "form-control", "rows": 3, "placeholder": "Descripción opcional"}),
             "status": forms.Select(attrs={"class": "form-select"}),
+            "display_scale": forms.Select(attrs={"class": "form-select"}),
         }
 
 

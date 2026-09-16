@@ -10,11 +10,19 @@ from presentations.models import MediaAsset, Presentation, Slide
 
 class PresentationService:
     @staticmethod
-    def create(*, name, description="", user=None, status=Presentation.Status.ACTIVE):
+    def create(
+        *,
+        name,
+        description="",
+        user=None,
+        status=Presentation.Status.ACTIVE,
+        display_scale=Presentation.DisplayScale.SCALE_100,
+    ):
         presentation = Presentation.objects.create(
             name=name,
             description=description,
             status=status,
+            display_scale=display_scale,
             created_by=user,
         )
         LoggingService.log(
@@ -26,10 +34,12 @@ class PresentationService:
         return presentation
 
     @staticmethod
-    def update(presentation, *, name, description, status, user=None):
+    def update(presentation, *, name, description, status, user=None, display_scale=None):
         presentation.name = name
         presentation.description = description
         presentation.status = status
+        if display_scale is not None:
+            presentation.display_scale = display_scale
         presentation.save()
         LoggingService.log(
             EventLog.EventType.PRESENTATION_UPDATED,
@@ -59,6 +69,7 @@ class PresentationService:
             description=presentation.description,
             status=Presentation.Status.INACTIVE,
             source_type=presentation.source_type,
+            display_scale=presentation.display_scale,
             created_by=user,
         )
 
@@ -134,6 +145,7 @@ class PresentationService:
             "token": presentation.token,
             "updated_at": presentation.updated_at.isoformat(),
             "version": int(presentation.updated_at.timestamp()),
+            "display_scale": presentation.display_scale,
             "slides": slides,
         }
 

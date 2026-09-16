@@ -18,6 +18,11 @@
         return div.innerHTML.replace(/\n/g, '<br>');
     }
 
+    function applyDisplayScale(scale) {
+        if (typeof scale !== 'number' || Number.isNaN(scale)) return;
+        slideEl.style.transform = `scale(${scale / 100})`;
+    }
+
     function renderSlide(slide) {
         const bg = slide.background_color || '#1a1a2e';
         slideEl.style.backgroundColor = bg;
@@ -93,6 +98,7 @@
             const data = await response.json();
 
             setOnline(true);
+            applyDisplayScale(data.display_scale);
 
             if (data.version !== currentVersion) {
                 currentVersion = data.version;

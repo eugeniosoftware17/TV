@@ -37,6 +37,7 @@ body.tv-mode {
     position: relative;
     background-size: cover;
     background-position: center;
+    transform-origin: center center;
 }
 
 .tv-slide.fade-out { opacity: 0; }

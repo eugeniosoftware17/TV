@@ -25,6 +25,8 @@ def public_player(request, token):
         {
             "presentation": presentation,
             "data_url": f"/p/{token}/data/",
+            "display_scale": presentation.display_scale,
+            "display_scale_factor": presentation.display_scale / 100,
         },
     )
 

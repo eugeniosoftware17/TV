@@ -32,6 +32,7 @@ def presentation_create(request):
                 name=form.cleaned_data["name"],
                 description=form.cleaned_data["description"],
                 status=form.cleaned_data["status"],
+                display_scale=form.cleaned_data["display_scale"],
                 user=request.user,
             )
             messages.success(request, "Presentación creada correctamente.")
@@ -90,6 +91,7 @@ def presentation_edit(request, pk):
                 name=form.cleaned_data["name"],
                 description=form.cleaned_data["description"],
                 status=form.cleaned_data["status"],
+                display_scale=form.cleaned_data["display_scale"],
                 user=request.user,
             )
             messages.success(request, "Presentación actualizada.")
