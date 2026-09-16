@@ -11,7 +11,12 @@ import subprocess
 import tempfile
 from pathlib import Path
 
-import pymupdf
+try:
+    import pymupdf
+    PYMUPDF_AVAILABLE = True
+except ImportError:
+    pymupdf = None
+    PYMUPDF_AVAILABLE = False
 
 logger = logging.getLogger(__name__)
 
@@ -135,6 +140,11 @@ class PowerPointConverter:
         return pdf_path
 
     def _pdf_to_pngs(self, pdf_path: Path, slides_dir: Path) -> list[Path]:
+        if not PYMUPDF_AVAILABLE:
+            raise PowerPointConversionError(
+                "PyMuPDF no está disponible en este servidor. La importación de PowerPoint está deshabilitada."
+            )
+
         slides_dir.mkdir(parents=True, exist_ok=True)
         images = []
 
